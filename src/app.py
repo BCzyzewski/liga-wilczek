@@ -7,6 +7,7 @@ from streamlit_extras.add_vertical_space import add_vertical_space
 import pandas as pd
 
 from datetime import datetime
+import pytz
 
 
 
@@ -76,7 +77,7 @@ def second_tab(tab: st.tabs):
                         write_color("yellow", f'Raczej nie ma sensu dodwać wyniku 0:0. Spróbuj ponownie.') 
                     else:
                         write_color("green", f'Wynik dodany! Rezultat: {player_1} {result_1} : {result_2} {player_2}')
-                        now = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+                        now = datetime.now(pytz.timezone('Europe/Warsaw')).strftime("%d/%m/%Y %H:%M:%S")
                         save_result_to_db(player_1, result_1, result_2, player_2, now)
 
             add_vertical_space(1)
