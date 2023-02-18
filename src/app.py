@@ -98,6 +98,8 @@ def second_tab(tab: st.tabs) -> None:
         description="Tutaj zapiszesz oraz zobaczysz wyniki meczów",
         color_name="violet-70")
 
+        all_players = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
+
         with st.container():
 
             with st.form("submit_match", clear_on_submit=True):
@@ -105,7 +107,7 @@ def second_tab(tab: st.tabs) -> None:
                 col1, col2, col3, col4 = st.columns(4)
 
                 with col1:
-                    player_1 = selectbox("Gracz 1", ["A", "B", "C"])
+                    player_1 = selectbox("Gracz 1", all_players)
 
                 with col2:
                     result_1 = st.number_input('Wygrane: G1', step = 1, min_value = 0, max_value = 5)
@@ -114,7 +116,7 @@ def second_tab(tab: st.tabs) -> None:
                     result_2 = st.number_input('Wygrane: G2', step = 1, min_value = 0, max_value = 5)
 
                 with col4:        
-                    player_2 = selectbox("Gracz 2", ["A", "B", "C"])
+                    player_2 = selectbox("Gracz 2", all_players)
 
 
                 submitted = st.form_submit_button("Submit")
@@ -152,7 +154,19 @@ def third_tab(tab: st.tabs) -> None:
 
         players = pd.concat([df['Gracz_1'], df['Gracz_2']]).unique()
 
-        players_dict = {key: [0, 0] for key in players}   
+        players_dict = {key: [0, 0] for key in players}
+
+        for index, row in df.iterrows():
+            players_dict[row['Gracz_1']][0] += row['Wygrane_G1']
+            players_dict[row['Gracz_1']][1] += row['Wygrane_G2']
+            players_dict[row['Gracz_2']][0] += row['Wygrane_G2']
+            players_dict[row['Gracz_2']][1] += row['Wygrane_G1']
+
+        result = pd.DataFrame.from_dict(players_dict, orient='index', columns=['Wygrane', 'Porażki'])
+
+        result['Punkty'] = result['Wygrane'] * 3 + result['Porażki']
+
+        st.dataframe(result.sort_values(by=['Punkty'], ascending=False), use_container_width = True)
 
 
 
